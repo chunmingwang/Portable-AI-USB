@@ -2,10 +2,10 @@
 
 A **fully private, portable, uncensored AI assistant** that runs 100% from a USB flash drive. No internet needed after setup. No data leaves the USB. Works on both **Windows** and **Mac**.
 
-
 ## 📺 Watch the Tutorial
 
 [![Portable AI USB Tutorial](https://img.youtube.com/vi/cqrMfO6AZRU/maxresdefault.jpg)](https://youtu.be/cqrMfO6AZRU)
+
 
 ## ⚡ What's Inside
 
@@ -29,6 +29,22 @@ A **fully private, portable, uncensored AI assistant** that runs 100% from a USB
 3. Wait for everything to download (~15-30 minutes depending on internet speed)
 4. **Done!** Your portable AI is ready to use
 
+### ⚠️ If the Model Download Fails
+
+The AI model (~5.7 GB) is the largest download. If it fails or gets interrupted:
+
+1. **Download the model manually** from HuggingFace:  
+   👉 [dolphin-2.9-llama3-8b-Q5_K_M.gguf](https://huggingface.co/bartowski/dolphin-2.9-llama3-8b-GGUF/resolve/main/dolphin-2.9-llama3-8b-Q5_K_M.gguf)
+
+2. **Place the downloaded file** into the `models\` folder on your USB:
+   ```
+   USB Drive\
+   └── models\
+       └── dolphin-2.9-llama3-8b-Q5_K_M.gguf   ← put it here
+   ```
+
+3. **Re-run `install.bat`** — it will detect the model and skip the download automatically
+
 ## ▶️ How to Use
 
 ### On Windows
@@ -45,8 +61,8 @@ A **fully private, portable, uncensored AI assistant** that runs 100% from a USB
 
 ## 🔐 Privacy
 
-- **Zero footprint** — nothing is installed on the host computer
-- All AI data, chats, and settings stay on the USB drive
+- **All chats & settings stay on the USB** — never saved to the host PC
+- A shortcut (junction link) is created in `AppData` on first run to redirect AnythingLLM's data path to the USB — this is the only trace left on the host computer
 - Works completely offline after initial setup
 - No telemetry, no cloud, no tracking
 
@@ -61,14 +77,18 @@ USB Drive/
 ├── ollama/                 ← AI engine (Windows)
 ├── ollama_mac/             ← AI engine (Mac, auto-downloaded)
 ├── models/                 ← AI model files
-├── anythingllm/            ← Chat interface app
+├── anythingllm/            ← Chat interface installer
+├── anythingllm_app/        ← Chat interface app (extracted on first run)
 └── anythingllm_data/       ← Your chats & settings (portable!)
 ```
 
 ## ⚠️ Important Notes
 
-- **First launch on a new computer** may take 30-60 seconds to load
-- The AI runs on your **CPU** — responses take 10-30 seconds depending on hardware
+- **First launch ever** — AnythingLLM needs to be extracted to the USB. This takes:
+  - ⚡ Fast USB (USB 3.0+): **1–3 minutes**
+  - 🐢 Slow USB (USB 2.0): **up to 30–40 minutes** — do NOT close the window!
+- **First launch on a new computer** after extraction may take 30–60 seconds to load
+- The AI runs on your **CPU** — responses take 10–30 seconds depending on hardware
 - If you have a **GPU**, responses will be much faster
 - Always **safely eject** the USB before unplugging
 
