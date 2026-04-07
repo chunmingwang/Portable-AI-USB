@@ -2,54 +2,67 @@
 
 A **fully private, portable, uncensored AI assistant** that runs 100% from a USB flash drive. No internet needed after setup. No data leaves the USB. Works on both **Windows** and **Mac**.
 
+**Now with multi-model support!** Choose from 6 curated AI models or bring your own.
+
 ## 📺 Watch the Tutorial
 
 [![Portable AI USB Tutorial](https://img.youtube.com/vi/cqrMfO6AZRU/maxresdefault.jpg)](https://youtu.be/cqrMfO6AZRU)
 
 
-## ⚡ What's Inside
+## ⚡ Available Models
 
-| Component | Purpose |
-|-----------|---------|
-| **Dolphin 2.9 LLaMA 3 8B** | Uncensored AI model (~5.7 GB) |
-| **Ollama** | Lightweight AI engine that runs the model |
-| **AnythingLLM** | Beautiful chat interface |
+During installation, you'll choose which model(s) to download:
+
+| # | Model | Size | Label | Best For |
+|---|-------|------|-------|----------|
+| 1 | **NemoMix Unleashed 12B** | ~7.0 GB | 🔓 UNCENSORED | ⭐ Recommended — best quality uncensored |
+| 2 | **Dolphin 2.9 Llama 3 8B** | ~4.9 GB | 🔓 UNCENSORED | Classic uncensored all-rounder |
+| 3 | **Mistral 7B Instruct v0.3** | ~4.1 GB | 🔒 STANDARD | Strong reasoning & coding |
+| 4 | **Qwen 2.5 7B Instruct** | ~4.7 GB | 🔒 STANDARD | Great multilingual support |
+| 5 | **Llama 3.2 3B Instruct** | ~2.0 GB | 🔒 STANDARD | Lightweight — fast on old PCs |
+| 6 | **Phi-3.5 Mini 3.8B** | ~2.2 GB | 🔒 STANDARD | Lightweight — good reasoning |
+| C | **Custom GGUF** | Varies | 🎨 CUSTOM | Bring your own HuggingFace model |
+
+> **🔓 UNCENSORED** = No content filters, answers everything  
+> **🔒 STANDARD** = Normal safety guidelines apply
 
 ## 🚀 Setup (One Time Only)
 
 ### What You Need
-- A USB flash drive with **at least 16 GB** of free space (32 GB recommended)
+- A USB flash drive with **at least 16 GB** of free space (32 GB recommended for multiple models)
 - Format the USB as **exFAT** (works on both Windows and Mac)
-- An internet connection for the initial download (~6 GB total)
+- An internet connection for the initial download
 
 ### Steps
 
 1. **Download this repo** and copy ALL files to your USB drive
 2. **Double-click `install.bat`** on the USB drive
-3. Wait for everything to download (~15-30 minutes depending on internet speed)
-4. **Done!** Your portable AI is ready to use
+3. **Choose your model(s)** from the interactive menu
+4. Wait for downloads to complete (time depends on model size & internet speed)
+5. **Done!** Your portable AI is ready to use
 
-### ⚠️ If the Model Download Fails
+### ⚠️ If a Model Download Fails
 
-The AI model (~5.7 GB) is the largest download. If it fails or gets interrupted:
+The installer automatically retries failed downloads. If it still fails:
 
-1. **Download the model manually** from HuggingFace:  
-   👉 [dolphin-2.9-llama3-8b-Q5_K_M.gguf](https://huggingface.co/bartowski/dolphin-2.9-llama3-8b-GGUF/resolve/main/dolphin-2.9-llama3-8b-Q5_K_M.gguf)
+1. **Download the model manually** from the HuggingFace link shown in the error
+2. **Place the .gguf file** into the `models\` folder on your USB
+3. **Re-run `install.bat`** — it will detect the file and skip the download
 
-2. **Place the downloaded file** into the `models\` folder on your USB:
-   ```
-   USB Drive\
-   └── models\
-       └── dolphin-2.9-llama3-8b-Q5_K_M.gguf   ← put it here
-   ```
+### 🔄 Adding More Models Later
 
-3. **Re-run `install.bat`** — it will detect the model and skip the download automatically
+Just **re-run `install.bat`** and select additional models. Already-downloaded models are automatically skipped.
+
+### 🎨 Custom Models
+
+Want a model not on the list? During install, choose option **C** and paste any direct `.gguf` download link from HuggingFace. The installer handles the rest!
 
 ## ▶️ How to Use
 
 ### On Windows
 - Double-click **`start-windows.bat`** on the USB drive
 - The AnythingLLM chat window will open automatically
+- **Switch between models** in AnythingLLM: Settings → LLM → select your model
 - Keep the black terminal window open while chatting
 - Press any key in the terminal to safely shut down
 
@@ -76,19 +89,34 @@ USB Drive/
 ├── start-mac.command       ← Mac launcher
 ├── ollama/                 ← AI engine (Windows)
 ├── ollama_mac/             ← AI engine (Mac, auto-downloaded)
-├── models/                 ← AI model files
+├── models/                 ← AI model files (.gguf) & configs
+│   ├── installed-models.txt    ← List of installed models
+│   ├── Modelfile-*             ← Per-model configurations
+│   └── *.gguf                  ← Model weights
 ├── anythingllm/            ← Chat interface installer
 ├── anythingllm_app/        ← Chat interface app (extracted on first run)
 └── anythingllm_data/       ← Your chats & settings (portable!)
 ```
 
+## 💾 USB Size Guide
+
+| Models | Minimum USB | Recommended USB |
+|--------|-------------|-----------------|
+| 1 lightweight (3B/3.8B) | 16 GB | 16 GB |
+| 1 recommended (NemoMix 12B) | 16 GB | 32 GB |
+| 2-3 models | 32 GB | 64 GB |
+| All 6 presets (~25 GB) | 64 GB | 64 GB |
+
 ## ⚠️ Important Notes
 
 - **First launch ever** — AnythingLLM needs to be extracted to the USB. This takes:
-  - ⚡ Fast USB (USB 3.0+): **1–3 minutes**
-  - 🐢 Slow USB (USB 2.0): **up to 30–40 minutes** — do NOT close the window!
+  - ⚡ Fast USB (USB 3.0+): **8–10 minutes**
+  - 🐢 Slow USB (USB 2.0): **up to 40–50 minutes** — do NOT close the window!
 - **First launch on a new computer** after extraction may take 30–60 seconds to load
 - The AI runs on your **CPU** — responses take 10–30 seconds depending on hardware
+- 12B models (NemoMix) need **at least 8 GB RAM** for good performance
+- 7-8B models need **at least 6 GB RAM**
+- 3B models run on almost anything with **4 GB RAM**
 - If you have a **GPU**, responses will be much faster
 - Always **safely eject** the USB before unplugging
 

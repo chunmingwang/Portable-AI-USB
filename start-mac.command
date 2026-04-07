@@ -78,6 +78,51 @@ export OLLAMA_MODELS="$DATA_DIR"
 export STORAGE_DIR="$USB_DIR/anythingllm_data"
 mkdir -p "$STORAGE_DIR"
 
+# -----------------------------------------------------------------
+# ENSURE ANYTHINGLLM USES EXTERNAL OLLAMA (not built-in)
+# -----------------------------------------------------------------
+ENV_FILE="$STORAGE_DIR/storage/.env"
+mkdir -p "$STORAGE_DIR/storage"
+
+# Read first model
+DEFAULT_MODEL="nemomix-local"
+if [ -f "$USB_DIR/models/installed-models.txt" ]; then
+    DEFAULT_MODEL=$(head -n 1 "$USB_DIR/models/installed-models.txt" | cut -d '|' -f 1)
+fi
+
+NEEDS_FIX=0
+if [ ! -f "$ENV_FILE" ]; then
+    NEEDS_FIX=1
+elif ! grep -q "LLM_PROVIDER=ollama" "$ENV_FILE" || grep -q "LLM_PROVIDER=anythingllm_ollama" "$ENV_FILE"; then
+    NEEDS_FIX=1
+fi
+
+if [ "$NEEDS_FIX" = "1" ]; then
+    echo "Configuring AnythingLLM to use external Ollama engine..."
+    cat > "$ENV_FILE" << EOF
+LLM_PROVIDER=ollama
+OLLAMA_BASE_PATH=http://127.0.0.1:11434
+OLLAMA_MODEL_PREF=$DEFAULT_MODEL
+OLLAMA_MODEL_TOKEN_LIMIT=4096
+EMBEDDING_ENGINE=native
+VECTOR_DB=lancedb
+EOF
+fi
+
+# -------------------------------------------------------
+# SHOW INSTALLED MODELS
+# -------------------------------------------------------
+if [ -f "$USB_DIR/models/installed-models.txt" ]; then
+    echo ""
+    echo "Installed models:"
+    while IFS="|" read -r local_name nice_name tag; do
+        if [ ! -z "$nice_name" ]; then
+            echo "  - $nice_name [$tag]"
+        fi
+    done < "$USB_DIR/models/installed-models.txt"
+    echo ""
+fi
+
 # Start Ollama in background
 if [ -f "$MAC_OLLAMA_DIR/Ollama.app/Contents/MacOS/Ollama" ]; then
     "$MAC_OLLAMA_DIR/Ollama.app/Contents/MacOS/Ollama" serve > /dev/null 2>&1 &

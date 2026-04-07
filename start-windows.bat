@@ -28,10 +28,53 @@ set "LOCALAPPDATA=%~dp0anythingllm_data"
 if not exist "%~dp0anythingllm_data" mkdir "%~dp0anythingllm_data"
 if not exist "%ANYTHINGLLM_PROFILE%" mkdir "%ANYTHINGLLM_PROFILE%"
 
+:: -------------------------------------------------------
+:: ENSURE ANYTHINGLLM USES EXTERNAL OLLAMA (not built-in)
+:: -------------------------------------------------------
+set "ENV_FILE=%~dp0anythingllm_data\storage\.env"
+if not exist "%~dp0anythingllm_data\storage" mkdir "%~dp0anythingllm_data\storage"
+
+:: Read the first model from installed-models.txt if it exists
+set "DEFAULT_MODEL=nemomix-local"
+if exist "%~dp0models\installed-models.txt" (
+    for /f "tokens=1 delims=|" %%a in (%~dp0models\installed-models.txt) do (
+        set "DEFAULT_MODEL=%%a"
+        goto :GotModel
+    )
+)
+:GotModel
+
+:: Check if .env needs fixing (missing or using built-in ollama)
+set "NEEDS_FIX=0"
+if not exist "%ENV_FILE%" set "NEEDS_FIX=1"
+if exist "%ENV_FILE%" (
+    findstr /C:"LLM_PROVIDER=ollama" "%ENV_FILE%" >nul 2>&1
+    if errorlevel 1 (
+        findstr /C:"LLM_PROVIDER=anythingllm_ollama" "%ENV_FILE%" >nul 2>&1
+        if not errorlevel 1 set "NEEDS_FIX=1"
+    )
+)
+
+if "%NEEDS_FIX%"=="1" (
+    echo Configuring AnythingLLM to use external Ollama engine...
+    (
+        echo LLM_PROVIDER=ollama
+        echo OLLAMA_BASE_PATH=http://127.0.0.1:11434
+        echo OLLAMA_MODEL_PREF=%DEFAULT_MODEL%
+        echo OLLAMA_MODEL_TOKEN_LIMIT=4096
+        echo EMBEDDING_ENGINE=native
+        echo VECTOR_DB=lancedb
+    ) > "%ENV_FILE%"
+    echo Done. Default model: %DEFAULT_MODEL%
+)
+
+:: -------------------------------------------------------
+:: PROFILE REDIRECT (keep chats on USB)
+:: -------------------------------------------------------
 :: Some desktop builds still resolve to %APPDATA%\anythingllm-desktop.
 :: Redirect that roaming profile back to the USB so chats stay portable.
 if exist "%ROAMING_PROFILE%" (
-    dir /AL "%USERPROFILE%\AppData\Roaming" | findstr /I /C:"anythingllm-desktop" >nul
+    dir /AL "%USERPROFILE%\AppData\Roaming" 2>nul | findstr /I /C:"anythingllm-desktop" >nul
     if errorlevel 1 (
         echo Migrating existing AnythingLLM profile from this computer to the USB...
         robocopy "%ROAMING_PROFILE%" "%ANYTHINGLLM_PROFILE%" /E >nul
@@ -49,6 +92,18 @@ if not exist "%ROAMING_PROFILE%" (
     echo.
     pause
     exit /b 1
+)
+
+:: -------------------------------------------------------
+:: SHOW INSTALLED MODELS
+:: -------------------------------------------------------
+if exist "%~dp0models\installed-models.txt" (
+    echo.
+    echo Installed models:
+    for /f "tokens=1,2,3 delims=|" %%a in (%~dp0models\installed-models.txt) do (
+        echo   - %%b [%%c]
+    )
+    echo.
 )
 
 :: Start Ollama Engine silently in the background
@@ -123,6 +178,8 @@ echo ===================================================
 echo.
 echo You can now use the AnythingLLM window to chat.
 echo Keep this black window open to keep the AI engine running!
+echo.
+echo TIP: Go to Settings ^> LLM to switch between models.
 echo.
 echo Press any key to SHUT DOWN the AI safely...
 echo.

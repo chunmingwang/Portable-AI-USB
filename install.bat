@@ -1,13 +1,18 @@
 @echo off
-title Portable AI - One-Click Setup
+title Portable AI - Multi-Model Setup
 color 0E
 
 echo ===================================================
 echo     PORTABLE UNCENSORED AI - USB SETUP             
 echo ===================================================
 echo.
-echo This will download everything you need onto this
-echo USB drive. Total download size: ~6 GB.
+echo This will download and configure AI models onto
+echo your USB drive. You'll get to CHOOSE which models
+echo to install from a curated list.
+echo.
+echo  - 6 preset models (uncensored + standard)
+echo  - Custom model support (bring your own GGUF)
+echo  - Minimum USB space: 16 GB (32 GB recommended)
 echo.
 echo Make sure you have a good internet connection!
 echo.
