@@ -329,6 +329,7 @@ Write-Host "[2/6] Creating folders on USB drive..." -ForegroundColor Yellow
 New-Item -ItemType Directory -Force -Path "$USB_Drive\models" | Out-Null
 New-Item -ItemType Directory -Force -Path "$USB_Drive\ollama" | Out-Null
 New-Item -ItemType Directory -Force -Path "$USB_Drive\anythingllm" | Out-Null
+New-Item -ItemType Directory -Force -Path "$USB_Drive\anythingllm_data\Programs" | Out-Null
 New-Item -ItemType Directory -Force -Path "$USB_Drive\anythingllm_data\anythingllm-desktop" | Out-Null
 Write-Host "      Done." -ForegroundColor Green
 
@@ -467,7 +468,7 @@ $AnythingLLMURL = "https://cdn.anythingllm.com/latest/AnythingLLMDesktop.exe"
 $InstallerDest  = "$USB_Drive\anythingllm\AnythingLLMDesktop.exe"
 
 # Check if we already extracted AnythingLLM previously
-if (Test-Path "$USB_Drive\anythingllm\AnythingLLM.exe") {
+if (Test-Path "$USB_Drive\anythingllm_data\Programs\anythingllm-desktop\AnythingLLM.exe") {
     Write-Host "      AnythingLLM already set up! Skipping..." -ForegroundColor Green
 } else {
     # Download the installer
@@ -481,22 +482,25 @@ if (Test-Path "$USB_Drive\anythingllm\AnythingLLM.exe") {
         Write-Host "      Extracting AnythingLLM to USB..." -ForegroundColor Magenta
         Write-Host "      (Fast USB: 8-10 min  |  Slow USB: up to 40-50 min. Do NOT close!)" -ForegroundColor Yellow
 
-        # Use the 8.3 short path to avoid issues with spaces in folder names
-        try {
-            $ShortPath  = (New-Object -ComObject Scripting.FileSystemObject).GetFolder($USB_Drive).ShortPath
-            $ExtractDir = "$ShortPath\anythingllm"
-        } catch {
-            $ExtractDir = "$USB_Drive\anythingllm"
-        }
+        # Temporarily force Windows to think AppData is on the USB drive
+        $originalLocalAppData = $env:LOCALAPPDATA
+        $originalAppData = $env:APPDATA
+        $env:LOCALAPPDATA = "$USB_Drive\anythingllm_data"
+        $env:APPDATA = "$USB_Drive\anythingllm_data"
 
-        Start-Process -FilePath $InstallerDest -ArgumentList "/S /D=$ExtractDir" -Wait
+        # Run the installer silently as the current user, letting it drop into the fake AppData folder
+        Start-Process -FilePath $InstallerDest -ArgumentList "/CURRENTUSER /S" -Wait
+
+        # Restore original paths
+        $env:LOCALAPPDATA = $originalLocalAppData
+        $env:APPDATA = $originalAppData
 
         # Clean up the installer to save space
-        if (Test-Path "$USB_Drive\anythingllm\AnythingLLM.exe") {
+        if (Test-Path "$USB_Drive\anythingllm_data\Programs\anythingllm-desktop\AnythingLLM.exe") {
             Remove-Item $InstallerDest -Force -ErrorAction SilentlyContinue
             Write-Host "      AnythingLLM extracted and ready!" -ForegroundColor Green
         } else {
-            Write-Host "      AnythingLLM installer downloaded. It will be extracted on first launch." -ForegroundColor Yellow
+            Write-Host "      WARNING: AnythingLLM failed to install completely to USB." -ForegroundColor Yellow
         }
     } else {
         Write-Host "      ERROR: AnythingLLM download failed!" -ForegroundColor Red
@@ -656,3 +660,4 @@ Write-Host "  between your installed models." -ForegroundColor DarkGray
 Write-Host ""
 Write-Host "Press any key to close this installer..." -ForegroundColor Yellow
 $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown") | Out-Null
+z1q2
