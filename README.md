@@ -1,6 +1,6 @@
 # 🔒 Portable Uncensored AI — Runs Entirely from a USB Drive
 
-A **fully private, portable, uncensored AI assistant** that runs 100% from a USB flash drive. No internet needed after setup. No data leaves the USB. Works on both **Windows** and **Mac**.
+A **fully private, portable, uncensored AI assistant** that runs 100% from a USB flash drive. No internet needed after setup. No data leaves the USB. Works on **Windows**, **Mac**, and **Linux**.
 
 **Now with multi-model support!** Choose from 6 curated AI models or bring your own.
 
@@ -30,7 +30,7 @@ During installation, you'll choose which model(s) to download:
 
 ### What You Need
 - A USB flash drive with **at least 16 GB** of free space (32 GB recommended for multiple models)
-- Format the USB as **exFAT** (works on both Windows and Mac)
+- Format the USB as **exFAT** (works on Windows, Mac, and Linux)
 - An internet connection for the initial download
 
 ### Steps
@@ -76,6 +76,26 @@ Want a model not on the list? During install, choose option **C** and paste any 
 - The AnythingLLM window will open automatically.
 - Press ENTER in the terminal to safely shut down.
 
+### 🐧 On Linux
+
+1. Open a terminal on your USB drive.
+2. Run the launcher:
+   make it executable first:
+   ```bash
+   chmod +x start-linux.sh preflight-check.sh install.sh install-core.sh 
+   ```
+   ```bash
+   bash preflight-check.sh
+   ```
+
+3. The preflight script checks for everything and executes the install script.
+4. open **ANYTHING LLM** folder and open the appImage there
+4. **Switch between models**: Settings → LLM → select your model.
+5. Keep the terminal open while chatting.
+6. Press **Enter** in the terminal to safely shut down.
+
+---
+
 ## 🔐 Privacy
 
 - **All chats & settings stay on the USB** — never saved to the host PC.
@@ -83,7 +103,7 @@ Want a model not on the list? During install, choose option **C** and paste any 
 - Works completely offline after initial setup.
 - No telemetry, no cloud, no tracking.
 
-## 📁 USB Drive Structure (After Setup)
+## 📁 USB Drive Structure (After Setup) - WINDOWS & MAC
 
 ```
 USB Drive/
@@ -99,6 +119,24 @@ USB Drive/
 ├── installer_data/         ← Temporary installer files (auto-cleaned)
 └── anythingllm_data/       ← Your chats & settings (100% portable!)
 ```
+## 📁 USB Drive Structure (After Setup) - LINUX
+
+```
+USB Drive/
+├── install.sh             ← Linux / Mac installer
+├── preflight-check.sh     ← Linux USB drive health check [ run this first ] 
+├── install-core.sh        ← Core setup logic (called by install.sh)
+└── start-linux.sh         ← Linux launcher
+├── ollama/                 ← AI engine (Windows)
+├── models/                 ← AI model files (.gguf) & configs
+│   ├── installed-models.txt    ← List of installed models
+│   └── *.gguf                  ← Model weights
+├── anythingllm/            ← Your AI Interface (installed here)
+├── installer_data/         ← Temporary installer files (auto-cleaned)
+└── anythingllm_data/       ← Your chats & settings (100% portable!)
+```
+
+---
 
 ## 💾 USB Size Guide
 
